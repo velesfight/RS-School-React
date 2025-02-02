@@ -13,6 +13,8 @@ interface AppState {
   isLoading: boolean;
   error: string | null;
   searchQuery: string;
+  currentPage: number;
+  allPages: number;
 }
 
 class App extends Component<Record<string, unknown>, AppState> {
@@ -23,14 +25,16 @@ class App extends Component<Record<string, unknown>, AppState> {
       isLoading: false,
       error: null,
       searchQuery: localStorage.getItem('searchQuery') || '',
+      currentPage: 1,
+      allPages: 0,
     };
   }
 
   componentDidMount() {
-    this.fetchCharacters(this.state.searchQuery);
+    this.fetchCharacters(this.state.searchQuery, this.state.currentPage);
   }
 
-  fetchCharacters = (query: string) => {
+  fetchCharacters = (query: string, page: number) => {
     this.setState({ isLoading: true, error: null, searchQuery: query });
     localStorage.setItem('searchQuery', query);
 
@@ -59,7 +63,8 @@ class App extends Component<Record<string, unknown>, AppState> {
   };
 
   handleSearch = (query: string) => {
-    this.fetchCharacters(query.trim());
+    this.setState({ currentPage: 1 });
+    this.fetchCharacters(query.trim(), 1);
   };
 
   render() {
