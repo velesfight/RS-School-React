@@ -54,7 +54,7 @@ class App extends Component<Record<string, unknown>, AppState> {
         const getResults = data.characters.map((character: Character) => ({
           uid: character.uid,
           name: character.name,
-          gender: character.gender,
+          gender: character.gender || 'Unknown',
           birthYear: character.birthYear,
         }));
 

@@ -16,14 +16,25 @@ class Results extends React.Component<ResultsProps> {
     const { results } = this.props;
     return (
       <div>
-        {results.map((character, index) => (
-          <div key={index}>
-            <h4>{character.uid}</h4>
-            <p>{character.name}</p>
-            <p>{character.gender}</p>
-            <p>{character.birthYear}</p>
-          </div>
-        ))}
+        <table>
+          <thead>
+            <tr>
+              <th>Character Uniq ID</th>
+              <th>Character name </th>
+              <th>Character gender </th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((character, index) => (
+              <tr key={index}>
+                <td>{character.uid}</td>
+                <td>{character.name}</td>
+                <td>{character.gender}</td>
+                <td>{character.birthYear}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   }
