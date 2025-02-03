@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import Search from './Search';
 import Results from './Results';
+import Spinner from './Spinner';
 
 interface Character {
   uid: string;
@@ -83,13 +84,18 @@ class App extends Component<Record<string, unknown>, AppState> {
     }
   };
 
+  triggerError = () => {
+    throw new Error('test error!');
+  };
+
   render() {
     return (
       <div>
-        <h1>Search</h1>
+        <h2>Search</h2>
         <Search onSearch={this.handleSearch} />
+        <h2>Result</h2>
         {this.state.isLoading ? (
-          <p>Loading...</p>
+          <Spinner />
         ) : this.state.error ? (
           <p>{this.state.error}</p> // Сообщение об ошибке
         ) : (
@@ -115,6 +121,7 @@ class App extends Component<Record<string, unknown>, AppState> {
             </button>
           </div>
         )}
+        <button onClick={this.triggerError}>Check</button>
       </div>
     );
   }
