@@ -22,7 +22,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
   render() {
     if (this.state.errorMessage) {
-      return <p> Что - то пошло не так. </p>;
+      return <p> Что - то пошло не так: {this.state.errorMessage} </p>;
     }
     return this.props.children;
   }

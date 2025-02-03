@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import Search from './Search';
 import Results from './Results';
-import ErrorBoundary from './ErrorBoundary';
 
 interface Character {
   uid: string;
@@ -58,10 +57,17 @@ class App extends Component<Record<string, unknown>, AppState> {
           birthYear: character.birthYear,
         }));
 
-        this.setState({ results: getResults, isLoading: false });
+        this.setState({
+          results: getResults,
+          isLoading: false,
+          allPages: this.state.allPages || 1,
+        });
       })
       .catch((error: Error) => {
-        this.setState({ error: error.message, isLoading: false });
+        this.setState({
+          error: error.message,
+          isLoading: false,
+        });
       });
   };
 
@@ -70,21 +76,44 @@ class App extends Component<Record<string, unknown>, AppState> {
     this.fetchCharacters(query.trim(), 1);
   };
 
+  handlePageChange = (page: number) => {
+    if (page >= 1 && page <= this.state.allPages) {
+      this.setState({ currentPage: page });
+      this.fetchCharacters(this.state.searchQuery, page);
+    }
+  };
+
   render() {
     return (
       <div>
         <h1>Search</h1>
-        <ErrorBoundary>
-          <Search onSearch={this.handleSearch} />
-        </ErrorBoundary>
+        <Search onSearch={this.handleSearch} />
         {this.state.isLoading ? (
           <p>Loading...</p>
         ) : this.state.error ? (
-          <p style={{ color: 'red' }}>{this.state.error}</p> // Сообщение об ошибке
+          <p>{this.state.error}</p> // Сообщение об ошибке
         ) : (
-          <ErrorBoundary>
-            <Results results={this.state.results} />
-          </ErrorBoundary>
+          <Results results={this.state.results} />
+        )}
+        {this.state.allPages > 1 && (
+          <div>
+            <button
+              onClick={() => this.handlePageChange(this.state.currentPage - 1)}
+              disabled={this.state.currentPage === 1}
+            >
+              Prev
+            </button>
+            <span>
+              {' '}
+              Page {this.state.currentPage} of {this.state.allPages}{' '}
+            </span>
+            <button
+              onClick={() => this.handlePageChange(this.state.currentPage + 1)}
+              disabled={this.state.currentPage === this.state.allPages}
+            >
+              Next
+            </button>
+          </div>
         )}
       </div>
     );
