@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import Search from './Search';
 import Results from './Results';
+import ErrorBoundary from './ErrorBoundary';
 
 interface Character {
   uid: string;
@@ -38,7 +39,9 @@ class App extends Component<Record<string, unknown>, AppState> {
     this.setState({ isLoading: true, error: null, searchQuery: query });
     localStorage.setItem('searchQuery', query);
 
-    const apiUrl = `https://stapi.co/api/v1/rest/character/search?name=${query}&page=${page}&limit=10`;
+    const apiUrl = query
+      ? `https://stapi.co/api/v1/rest/character/search?name=${query}&page=${page}&limit=10`
+      : `https://stapi.co/api/v1/rest/character/search?page=${page}&limit=10`;
 
     fetch(apiUrl)
       .then((res) => {
@@ -71,13 +74,17 @@ class App extends Component<Record<string, unknown>, AppState> {
     return (
       <div>
         <h1>Search</h1>
-        <Search onSearch={this.handleSearch} />
+        <ErrorBoundary>
+          <Search onSearch={this.handleSearch} />
+        </ErrorBoundary>
         {this.state.isLoading ? (
           <p>Loading...</p>
         ) : this.state.error ? (
           <p style={{ color: 'red' }}>{this.state.error}</p> // Сообщение об ошибке
         ) : (
-          <Results results={this.state.results} />
+          <ErrorBoundary>
+            <Results results={this.state.results} />
+          </ErrorBoundary>
         )}
       </div>
     );
