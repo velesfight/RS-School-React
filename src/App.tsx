@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import Search from './Search';
 import Results from './Results';
 import Spinner from './Spinner';
@@ -9,34 +9,21 @@ interface Character {
   gender: string;
   birthYear: number;
 }
-interface AppState {
-  results: Character[];
-  isLoading: boolean;
-  error: string | null;
-  searchQuery: string;
-  currentPage: number;
-  allPages: number;
-}
 
-class App extends Component<Record<string, unknown>, AppState> {
-  constructor(props: Record<string, unknown>) {
-    super(props);
-    this.state = {
-      results: [],
-      isLoading: false,
-      error: null,
-      searchQuery: localStorage.getItem('searchQuery') || '',
-      currentPage: 1,
-      allPages: 0,
-    };
-  }
+const App = (): JSX.Element => {
+  const [results, setResults] = useState<Character[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>(
+    localStorage.getItem('searchQuery') || ''
+  );
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [allPages, setAllPages] = useState<number>(0);
 
-  componentDidMount() {
-    this.fetchCharacters(this.state.searchQuery, this.state.currentPage);
-  }
-
-  fetchCharacters = (query: string, page: number) => {
-    this.setState({ isLoading: true, error: null, searchQuery: query });
+  const fetchCharacters = (query: string, page: number) => {
+    setIsLoading(true);
+    setError(null);
+    setSearchQuery(query);
     localStorage.setItem('searchQuery', query);
 
     const apiUrl = query
@@ -58,73 +45,71 @@ class App extends Component<Record<string, unknown>, AppState> {
           birthYear: character.birthYear,
         }));
 
-        this.setState({
-          results: getResults,
-          isLoading: false,
-          allPages: this.state.allPages || 1,
-        });
+        setResults(getResults);
+        setIsLoading(false);
+        setAllPages(data.totalPages || 1);
       })
       .catch((error: Error) => {
-        this.setState({
-          error: error.message,
-          isLoading: false,
-        });
+        setError(error.message);
+        setIsLoading(false);
       });
   };
 
-  handleSearch = (query: string) => {
-    this.setState({ currentPage: 1 });
-    this.fetchCharacters(query.trim(), 1);
+  useEffect(() => {
+    fetchCharacters(searchQuery, currentPage);
+  }, [searchQuery, currentPage]);
+
+  const handleSearch = (query: string) => {
+    setCurrentPage(1);
+    fetchCharacters(query.trim(), 1);
   };
 
-  handlePageChange = (page: number) => {
-    if (page >= 1 && page <= this.state.allPages) {
-      this.setState({ currentPage: page });
-      this.fetchCharacters(this.state.searchQuery, page);
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= allPages) {
+      setCurrentPage(page);
+      fetchCharacters(searchQuery, page);
     }
   };
 
-  triggerError = () => {
+  const triggerError = () => {
     throw new Error('test error!');
   };
 
-  render() {
-    return (
-      <div>
-        <h2>Search</h2>
-        <Search onSearch={this.handleSearch} />
-        <h2>Result</h2>
-        {this.state.isLoading ? (
-          <Spinner />
-        ) : this.state.error ? (
-          <p>{this.state.error}</p> // Сообщение об ошибке
-        ) : (
-          <Results results={this.state.results} />
-        )}
-        {this.state.allPages > 1 && (
-          <div>
-            <button
-              onClick={() => this.handlePageChange(this.state.currentPage - 1)}
-              disabled={this.state.currentPage === 1}
-            >
-              Prev
-            </button>
-            <span>
-              {' '}
-              Page {this.state.currentPage} of {this.state.allPages}{' '}
-            </span>
-            <button
-              onClick={() => this.handlePageChange(this.state.currentPage + 1)}
-              disabled={this.state.currentPage === this.state.allPages}
-            >
-              Next
-            </button>
-          </div>
-        )}
-        <button onClick={this.triggerError}>Check</button>
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <h2>Search</h2>
+      <Search onSearch={handleSearch} />
+      <h2>Result</h2>
+      {isLoading ? (
+        <Spinner />
+      ) : error ? (
+        <p>{error}</p> // Сообщение об ошибке
+      ) : (
+        <Results results={results} />
+      )}
+      {allPages > 1 && (
+        <div>
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Prev
+          </button>
+          <span>
+            {' '}
+            Page {currentPage} of {allPages}
+          </span>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === allPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
+      <button onClick={triggerError}>Check</button>
+    </div>
+  );
+};
 
 export default App;

@@ -9,7 +9,7 @@ interface ResultsProps {
   results: Character[];
 }
 
-function Results({ results }: ResultsProps): JSX.Element {
+const Results = ({ results }: ResultsProps): JSX.Element => {
   if (results.length === 0) {
     return <p>No results found.</p>;
   }
@@ -37,6 +37,6 @@ function Results({ results }: ResultsProps): JSX.Element {
       </table>
     </div>
   );
-}
+};
 
 export default Results;
