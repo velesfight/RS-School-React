@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface Character {
   uid: string;
   name: string;
@@ -11,33 +9,34 @@ interface ResultsProps {
   results: Character[];
 }
 
-class Results extends React.Component<ResultsProps> {
-  render() {
-    const { results } = this.props;
-    return (
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th>Character Uniq ID</th>
-              <th>Character name </th>
-              <th>Character gender </th>
-            </tr>
-          </thead>
-          <tbody>
-            {results.map((character, index) => (
-              <tr key={index}>
-                <td>{character.uid}</td>
-                <td>{character.name}</td>
-                <td>{character.gender}</td>
-                <td>{character.birthYear}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
+function Results({ results }: ResultsProps): JSX.Element {
+  if (results.length === 0) {
+    return <p>No results found.</p>;
   }
+  return (
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Character Uniq ID</th>
+            <th>Character name </th>
+            <th>Character gender </th>
+            <th>Character Birth Year</th>
+          </tr>
+        </thead>
+        <tbody>
+          {results.map((character) => (
+            <tr key={character.uid}>
+              <td>{character.uid}</td>
+              <td>{character.name}</td>
+              <td>{character.gender}</td>
+              <td>{character.birthYear}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export default Results;

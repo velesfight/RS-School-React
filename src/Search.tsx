@@ -4,7 +4,7 @@ interface SearchProps {
   onSearch: (query: string) => void;
 }
 
-const Search = ({ onSearch }: SearchProps): JSX.Element => {
+function Search({ onSearch }: SearchProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState<string>(
     localStorage.getItem('searchQuery') || ''
   );
@@ -25,6 +25,6 @@ const Search = ({ onSearch }: SearchProps): JSX.Element => {
       <button onClick={handleSearch}>Search</button>
     </div>
   );
-};
+}
 
 export default Search;
