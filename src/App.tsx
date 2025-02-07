@@ -72,6 +72,7 @@ const App = (): JSX.Element => {
 
   const handleSearch = (query: string) => {
     setCurrentPage(1);
+    navigate(`/search/1`);
     fetchCharacters(query.trim(), 1);
   };
 
