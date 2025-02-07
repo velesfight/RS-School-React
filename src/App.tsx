@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Search from './Search';
 import Results from './Results';
 import Spinner from './Spinner';
@@ -11,14 +12,24 @@ interface Character {
 }
 
 const App = (): JSX.Element => {
+  const navigate = useNavigate();
+  const { page } = useParams<{ page?: string }>();
   const [results, setResults] = useState<Character[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>(
     localStorage.getItem('searchQuery') || ''
   );
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(
+    page ? parseInt(page, 10) : 1
+  );
   const [allPages, setAllPages] = useState<number>(0);
+
+  useEffect(() => {
+    if (page) {
+      setCurrentPage(parseInt(page, 10) || 1);
+    }
+  }, [page]);
 
   const fetchCharacters = (query: string, page: number) => {
     setIsLoading(true);
@@ -67,6 +78,7 @@ const App = (): JSX.Element => {
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= allPages) {
       setCurrentPage(page);
+      navigate(`/search/${page}`);
       fetchCharacters(searchQuery, page);
     }
   };
