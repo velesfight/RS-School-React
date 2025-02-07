@@ -96,7 +96,7 @@ const App = (): JSX.Element => {
       {isLoading ? (
         <Spinner />
       ) : error ? (
-        <p>{error}</p> // Сообщение об ошибке
+        <p>{error}</p>
       ) : (
         <Results results={results} />
       )}
