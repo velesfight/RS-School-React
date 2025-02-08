@@ -14,6 +14,7 @@ interface Character {
 const App = (): JSX.Element => {
   const navigate = useNavigate();
   const { page } = useParams<{ page?: string }>();
+  console.log('Current page from URL:', page);
   const [results, setResults] = useState<Character[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +22,7 @@ const App = (): JSX.Element => {
     localStorage.getItem('searchQuery') || ''
   );
   const [currentPage, setCurrentPage] = useState<number>(
-    page ? parseInt(page, 10) : 1
+    page ? parseInt(page, 10) : 0
   );
   const [allPages, setAllPages] = useState<number>(0);
 
@@ -32,13 +33,14 @@ const App = (): JSX.Element => {
   }, [page]);
 
   const fetchCharacters = (query: string, page: number) => {
+    console.log(`Fetching data for query: ${query}, page: ${page}`);
     setIsLoading(true);
     setError(null);
     setSearchQuery(query);
     localStorage.setItem('searchQuery', query);
 
     const apiUrl = query
-      ? `https://stapi.co/api/v1/rest/character/search?name=${query}&page=${page}&limit=10`
+      ? `https://stapi.co/api/v1/rest/character/search?name=${query}&page=${page - 1}&limit=10`
       : `https://stapi.co/api/v1/rest/character/search?page=${page}&limit=10`;
 
     fetch(apiUrl)
@@ -58,7 +60,7 @@ const App = (): JSX.Element => {
 
         setResults(getResults);
         setIsLoading(false);
-        setAllPages(data.totalPages || 1);
+        setAllPages(data.page?.totalPages || 1);
       })
       .catch((error: Error) => {
         setError(error.message);
@@ -67,6 +69,9 @@ const App = (): JSX.Element => {
   };
 
   useEffect(() => {
+    console.log(
+      `Current state - searchQuery: ${searchQuery}, currentPage: ${currentPage}`
+    );
     fetchCharacters(searchQuery, currentPage);
   }, [searchQuery, currentPage]);
 
@@ -109,7 +114,6 @@ const App = (): JSX.Element => {
             Prev
           </button>
           <span>
-            {' '}
             Page {currentPage} of {allPages}
           </span>
           <button

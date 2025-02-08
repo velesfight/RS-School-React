@@ -9,20 +9,17 @@ import ErrorBoundary from './ErrorBoundary.tsx';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <ErrorBoundary>
-        <Routes>
-          <Route path="/" element={<Navigate to="/search/1" />} />
-          <Route
-            path="/search/:page"
-            element={
-              <ErrorBoundary>
-                <App />
-              </ErrorBoundary>
-            }
-          />
-          <App />
-        </Routes>
-      </ErrorBoundary>
+      <Routes>
+        <Route path="/" element={<Navigate to="/search/1" />} />
+        <Route
+          path="/search/:page"
+          element={
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
+          }
+        />
+      </Routes>
     </BrowserRouter>
   </StrictMode>
 );
