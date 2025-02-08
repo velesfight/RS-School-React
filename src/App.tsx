@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Search from './Search';
 import Results from './Results';
 import Spinner from './Spinner';
+import Details from './Details';
 
 interface Character {
   uid: string;
@@ -97,6 +98,7 @@ const App = (): JSX.Element => {
     <div>
       <h2>Search</h2>
       <Search onSearch={handleSearch} />
+      <Details />
       <h2>Result</h2>
       {isLoading ? (
         <Spinner />
