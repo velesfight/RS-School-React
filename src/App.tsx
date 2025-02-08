@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import Search from './Search';
 import Results from './Results';
 import Spinner from './Spinner';
-import Details from './Details';
 
 interface Character {
   uid: string;
   name: string;
   gender: string;
-  birthYear: number;
 }
 
 const App = (): JSX.Element => {
@@ -26,6 +24,10 @@ const App = (): JSX.Element => {
     page ? parseInt(page, 10) : 0
   );
   const [allPages, setAllPages] = useState<number>(0);
+  const [details, setDetails] = useState<boolean>(false);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
+    null
+  );
 
   useEffect(() => {
     if (page) {
@@ -56,7 +58,6 @@ const App = (): JSX.Element => {
           uid: character.uid,
           name: character.name,
           gender: character.gender || 'Unknown',
-          birthYear: character.birthYear,
         }));
 
         setResults(getResults);
@@ -90,43 +91,78 @@ const App = (): JSX.Element => {
     }
   };
 
+  const handleCharacterClick = (character: Character) => {
+    setSelectedCharacter(character);
+    setDetails(true);
+    navigate(`/?frontpage=${currentPage}&details/${character.uid}`);
+  };
+
+  const handleCloseDetails = () => {
+    setDetails(false);
+    setSelectedCharacter(null);
+    navigate(`/?frontpage=${currentPage}`);
+  };
+
   const triggerError = () => {
     throw new Error('test error!');
   };
 
   return (
-    <div>
-      <h2>Search</h2>
-      <Search onSearch={handleSearch} />
-      <Details />
-      <h2>Result</h2>
-      {isLoading ? (
-        <Spinner />
-      ) : error ? (
-        <p>{error}</p>
-      ) : (
-        <Results results={results} />
-      )}
-      {allPages > 1 && (
-        <div>
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Prev
-          </button>
-          <span>
-            Page {currentPage} of {allPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === allPages}
-          >
-            Next
-          </button>
-        </div>
-      )}
-      <button onClick={triggerError}>Check</button>
+    <div className="container-fluid d-flex">
+      <div className="col-md-8">
+        <h2>Search</h2>
+        <Search onSearch={handleSearch} />
+        <h2>Result</h2>
+        {isLoading ? (
+          <Spinner />
+        ) : error ? (
+          <p className="text-danger">{error}</p>
+        ) : (
+          <Results results={results} onClick={handleCharacterClick} />
+        )}
+        {allPages > 1 && (
+          <div className="d-flex justify-content-between mt-3">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="btn btn-primary"
+            >
+              Prev
+            </button>
+            <span>
+              Page {currentPage} of {allPages}
+            </span>
+            <button
+              className="btn btn-primary"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === allPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="col-md-4" style={{ paddingLeft: '20px' }}>
+        {details && selectedCharacter && (
+          <div className="border p-3">
+            <button
+              className="btn btn-secondary mb-2"
+              onClick={handleCloseDetails}
+            >
+              Close Details
+            </button>
+            <Outlet />
+          </div>
+        )}
+      </div>
+      <div className="position-relative" style={{ minHeight: '100vh' }}>
+        <button
+          className="btn btn-secondary position-absolute bottom-0 end-0 m-3"
+          onClick={triggerError}
+        >
+          Check
+        </button>
+      </div>
     </div>
   );
 };

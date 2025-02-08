@@ -2,14 +2,14 @@ interface Character {
   uid: string;
   name: string;
   gender: string;
-  birthYear: number;
 }
 
 interface ResultsProps {
   results: Character[];
+  onClick: (character: Character) => void;
 }
 
-const Results = ({ results }: ResultsProps): JSX.Element => {
+const Results = ({ results, onClick }: ResultsProps): JSX.Element => {
   if (results.length === 0) {
     return <p>No results found.</p>;
   }
@@ -21,16 +21,14 @@ const Results = ({ results }: ResultsProps): JSX.Element => {
             <th>Character Uniq ID</th>
             <th>Character name </th>
             <th>Character gender </th>
-            <th>Character Birth Year</th>
           </tr>
         </thead>
         <tbody>
           {results.map((character) => (
-            <tr key={character.uid}>
+            <tr key={character.uid} onClick={() => onClick(character)}>
               <td>{character.uid}</td>
               <td>{character.name}</td>
               <td>{character.gender}</td>
-              <td>{character.birthYear}</td>
             </tr>
           ))}
         </tbody>
