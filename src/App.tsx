@@ -4,6 +4,7 @@ import Search from './Search';
 import Results from './Results';
 import Spinner from './Spinner';
 import Pagination from './PAgination';
+import React from 'react';
 
 interface Character {
   uid: string;
