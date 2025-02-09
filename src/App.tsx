@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import Search from './Search';
 import Results from './Results';
 import Spinner from './Spinner';
+import Pagination from './PAgination';
 
 interface Character {
   uid: string;
@@ -127,25 +128,11 @@ const App = (): JSX.Element => {
           <Results results={results} onClick={handleCharacterClick} />
         )}
         {allPages > 1 && (
-          <div className="d-flex justify-content-between mt-3">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="btn btn-primary"
-            >
-              Prev
-            </button>
-            <span>
-              Page {currentPage} of {allPages}
-            </span>
-            <button
-              className="btn btn-primary"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === allPages}
-            >
-              Next
-            </button>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            allPages={allPages}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
       <div className="col-md-4" style={{ paddingLeft: '20px' }}>
