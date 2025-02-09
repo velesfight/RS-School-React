@@ -13,20 +13,21 @@ const Results = ({ results, onClick }: ResultsProps): JSX.Element => {
   if (results.length === 0) {
     return <p>No results found.</p>;
   }
+
   return (
     <div>
       <table>
         <thead>
           <tr>
-            <th>Character UID</th> {/* Отображаем только UID */}
+            <th>Character UID</th>
+            <th>Character Name</th>
           </tr>
         </thead>
         <tbody>
           {results.map((character) => (
             <tr key={character.uid} onClick={() => onClick(character)}>
-              {' '}
-              {/* При клике на строку, передаем персонажа */}
-              <td>{character.uid}</td> {/* Отображаем только UID персонажа */}
+              <td>{character.uid}</td>
+              <td>{character.name}</td>
             </tr>
           ))}
         </tbody>
