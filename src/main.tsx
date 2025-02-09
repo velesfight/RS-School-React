@@ -19,8 +19,9 @@ createRoot(document.getElementById('root')!).render(
               <App />
             </ErrorBoundary>
           }
-        />
-        <Route path="details/:uid" element={<Details />} />
+        >
+          <Route path="details/:uid" element={<Details />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>

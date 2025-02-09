@@ -18,17 +18,15 @@ const Results = ({ results, onClick }: ResultsProps): JSX.Element => {
       <table>
         <thead>
           <tr>
-            <th>Character Uniq ID</th>
-            <th>Character name </th>
-            <th>Character gender </th>
+            <th>Character UID</th> {/* Отображаем только UID */}
           </tr>
         </thead>
         <tbody>
           {results.map((character) => (
             <tr key={character.uid} onClick={() => onClick(character)}>
-              <td>{character.uid}</td>
-              <td>{character.name}</td>
-              <td>{character.gender}</td>
+              {' '}
+              {/* При клике на строку, передаем персонажа */}
+              <td>{character.uid}</td> {/* Отображаем только UID персонажа */}
             </tr>
           ))}
         </tbody>

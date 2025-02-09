@@ -94,22 +94,28 @@ const App = (): JSX.Element => {
   const handleCharacterClick = (character: Character) => {
     setSelectedCharacter(character);
     setDetails(true);
-    navigate(`/?frontpage=${currentPage}&details/${character.uid}`);
+    navigate(`/search/${currentPage}/details/${character.uid}`);
   };
 
   const handleCloseDetails = () => {
     setDetails(false);
     setSelectedCharacter(null);
-    navigate(`/?frontpage=${currentPage}`);
+    navigate(`/search/${currentPage}`);
   };
-
+  const handleLeftSectionClick = () => {
+    if (details) {
+      setDetails(false); // Закрытие правой секции при клике на левую секцию
+      setSelectedCharacter(null);
+      navigate(`/search/${currentPage}`);
+    }
+  };
   const triggerError = () => {
     throw new Error('test error!');
   };
 
   return (
     <div className="container-fluid d-flex">
-      <div className="col-md-8">
+      <div className="col-md-8" onClick={handleLeftSectionClick}>
         <h2>Search</h2>
         <Search onSearch={handleSearch} />
         <h2>Result</h2>
